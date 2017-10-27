@@ -21,8 +21,19 @@ def snake_case_keys(somedict):
 
 app = Flask(__name__)
 fake = Factory.create()
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+#dotenv_path = join(dirname(__file__), '.env')
+#load_dotenv(dotenv_path)
+
+TWILIO_ACCOUNT_SID = 'AC***'
+TWILIO_API_KEY = 'SK***'
+TWILIO_API_SECRET = '***'
+PUSH_CREDENTIAL_SID = 'CR***'
+APP_SID = 'AP***'
+AUTH_TOKEN = '***'
+TWILIO_NOTIFICATION_SERVICE_SID = '***'
+TWILIO_CHAT_SERVICE_SID = '***'
+TWILIO_SYNC_SERVICE_SID = '***'
+
 
 @app.route('/')
 def index():
@@ -49,13 +60,13 @@ def chat():
 @app.route('/config')
 def config():
     return jsonify(
-        TWILIO_ACCOUNT_SID=os.environ['TWILIO_ACCOUNT_SID'],
-        TWILIO_NOTIFICATION_SERVICE_SID=os.environ['TWILIO_NOTIFICATION_SERVICE_SID'],
-        TWILIO_API_KEY=os.environ['TWILIO_API_KEY'],
-        TWILIO_API_SECRET=bool(os.environ['TWILIO_API_SECRET']),
-        TWILIO_CHAT_SERVICE_SID=os.environ['TWILIO_CHAT_SERVICE_SID'],
-        TWILIO_SYNC_SERVICE_SID=os.environ['TWILIO_SYNC_SERVICE_SID'],
-    )
+                   TWILIO_ACCOUNT_SID=os.environ.get['TWILIO_ACCOUNT_SID',TWILIO_ACCOUNT_SID],
+                   TWILIO_NOTIFICATION_SERVICE_SID=os.environ.get['TWILIO_NOTIFICATION_SERVICE_SID',TWILIO_NOTIFICATION_SERVICE_SID],
+                   TWILIO_API_KEY=os.environ.get['TWILIO_API_KEY',TWILIO_API_KEY],
+                   TWILIO_API_SECRET=bool(os.environ.get['TWILIO_API_SECRET',TWILIO_API_SECRET]),
+                   TWILIO_CHAT_SERVICE_SID=os.environ.get['TWILIO_CHAT_SERVICE_SID',TWILIO_CHAT_SERVICE_SID],
+                   TWILIO_SYNC_SERVICE_SID=os.environ.get['TWILIO_SYNC_SERVICE_SID',TWILIO_SYNC_SERVICE_SID],
+                   )
 
 @app.route('/token', methods=['GET'])
 def randomToken():
@@ -76,15 +87,15 @@ def token(identity):
 
 def generateToken(identity):
     # get credentials for environment variables
-    account_sid = os.environ['TWILIO_ACCOUNT_SID']
-    api_key = os.environ['TWILIO_API_KEY']
-    api_secret = os.environ['TWILIO_API_SECRET']
-    sync_service_sid = os.environ.get('TWILIO_SYNC_SERVICE_SID', 'default')
-    chat_service_sid = os.environ['TWILIO_CHAT_SERVICE_SID']
-
+    account_sid = os.environ.get['TWILIO_ACCOUNT_SID',TWILIO_ACCOUNT_SID]
+    api_key = os.environ.get['TWILIO_API_KEY',TWILIO_API_KEY]
+    api_secret = os.environ.get['TWILIO_API_SECRET',TWILIO_API_SECRET]
+    sync_service_sid = os.environ.get('TWILIO_SYNC_SERVICE_SID', TWILIO_SYNC_SERVICE_SID)
+    chat_service_sid = os.environ.get['TWILIO_CHAT_SERVICE_SID', TWILIO_CHAT_SERVICE_SID]
+    
     # Create access token with credentials
     token = AccessToken(account_sid, api_key, api_secret, identity=identity)
-
+    
     # Create a Sync grant and add to token
     if sync_service_sid:
         sync_grant = SyncGrant(service_sid=sync_service_sid)
@@ -94,11 +105,11 @@ def generateToken(identity):
     video_grant = VideoGrant()
     token.add_grant(video_grant)
 
-    # Create an Chat grant and add to token
-    if chat_service_sid:
-        chat_grant = ChatGrant(service_sid=chat_service_sid)
-        token.add_grant(chat_grant)
-
+# Create an Chat grant and add to token
+if chat_service_sid:
+    chat_grant = ChatGrant(service_sid=chat_service_sid)
+    token.add_grant(chat_grant)
+    
     # Return token info as JSON
     return jsonify(identity=identity, token=token.to_jwt().decode('utf-8'))
 
@@ -109,27 +120,27 @@ def generateToken(identity):
 @app.route('/register', methods=['POST'])
 def register():
     # get credentials for environment variables
-    account_sid = os.environ['TWILIO_ACCOUNT_SID']
-    api_key = os.environ['TWILIO_API_KEY']
-    api_secret = os.environ['TWILIO_API_SECRET']
-    service_sid = os.environ['TWILIO_NOTIFICATION_SERVICE_SID']
-
+    account_sid = os.environ.get['TWILIO_ACCOUNT_SID',TWILIO_ACCOUNT_SID]
+    api_key = os.environ.get['TWILIO_API_KEY', TWILIO_API_KEY]
+    api_secret = os.environ.get['TWILIO_API_SECRET',TWILIO_API_SECRET]
+    service_sid = os.environ.get['TWILIO_NOTIFICATION_SERVICE_SID',TWILIO_NOTIFICATION_SERVICE_SID]
+    
     # Initialize the Twilio client
     client = Client(api_key, api_secret, account_sid)
-
+    
     # Body content
     content = request.get_json()
-
+    
     content = snake_case_keys(content)
-
+    
     # Get a reference to the notification service
     service = client.notify.services(service_sid)
-
+    
     # Create the binding
     binding = service.bindings.create(**content)
-
+    
     print(binding)
-
+    
     # Return success message
     return jsonify(message="Binding created!")
 
@@ -137,24 +148,24 @@ def register():
 @app.route('/send-notification', methods=['POST'])
 def send_notification():
     # get credentials for environment variables
-    account_sid = os.environ['TWILIO_ACCOUNT_SID']
-    api_key = os.environ['TWILIO_API_KEY']
-    api_secret = os.environ['TWILIO_API_SECRET']
-    service_sid = os.environ['TWILIO_NOTIFICATION_SERVICE_SID']
-
+    account_sid = os.environ.get['TWILIO_ACCOUNT_SID',TWILIO_ACCOUNT_SID]
+    api_key = os.environ.get['TWILIO_API_KEY'TWILIO_API_KEY]
+    api_secret = os.environ.get['TWILIO_API_SECRET'TWILIO_API_SECRET]
+    service_sid = os.environ.get['TWILIO_NOTIFICATION_SERVICE_SID'TWILIO_NOTIFICATION_SERVICE_SID]
+    
     # Initialize the Twilio client
     client = Client(api_key, api_secret, account_sid)
-
+    
     service = client.notify.services(service_sid)
-
+    
     # Get the request json or form data
     content = request.get_json() if request.get_json() else request.form
-
+    
     content = snake_case_keys(content)
-
+    
     # Create a notification with the given form data
     notification = service.notifications.create(**content)
-
+    
     return jsonify(message="Notification created!")
 
 @app.route('/<path:path>')
@@ -163,3 +174,4 @@ def static_file(path):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+
