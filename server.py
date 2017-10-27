@@ -149,9 +149,9 @@ def register():
 def send_notification():
     # get credentials for environment variables
     account_sid = os.environ.get['TWILIO_ACCOUNT_SID',TWILIO_ACCOUNT_SID]
-    api_key = os.environ.get['TWILIO_API_KEY'TWILIO_API_KEY]
-    api_secret = os.environ.get['TWILIO_API_SECRET'TWILIO_API_SECRET]
-    service_sid = os.environ.get['TWILIO_NOTIFICATION_SERVICE_SID'TWILIO_NOTIFICATION_SERVICE_SID]
+    api_key = os.environ.get['TWILIO_API_KEY',TWILIO_API_KEY]
+    api_secret = os.environ.get['TWILIO_API_SECRET',TWILIO_API_SECRET]
+    service_sid = os.environ.get['TWILIO_NOTIFICATION_SERVICE_SID',TWILIO_NOTIFICATION_SERVICE_SID]
     
     # Initialize the Twilio client
     client = Client(api_key, api_secret, account_sid)
