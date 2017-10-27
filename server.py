@@ -60,13 +60,13 @@ def chat():
 @app.route('/config')
 def config():
     return jsonify(
-                   TWILIO_ACCOUNT_SID=os.environ.get['TWILIO_ACCOUNT_SID',TWILIO_ACCOUNT_SID],
-                   TWILIO_NOTIFICATION_SERVICE_SID=os.environ.get['TWILIO_NOTIFICATION_SERVICE_SID',TWILIO_NOTIFICATION_SERVICE_SID],
-                   TWILIO_API_KEY=os.environ.get['TWILIO_API_KEY',TWILIO_API_KEY],
-                   TWILIO_API_SECRET=bool(os.environ.get['TWILIO_API_SECRET',TWILIO_API_SECRET]),
-                   TWILIO_CHAT_SERVICE_SID=os.environ.get['TWILIO_CHAT_SERVICE_SID',TWILIO_CHAT_SERVICE_SID],
-                   TWILIO_SYNC_SERVICE_SID=os.environ.get['TWILIO_SYNC_SERVICE_SID',TWILIO_SYNC_SERVICE_SID],
-                   )
+        TWILIO_ACCOUNT_SID=os.environ.get['TWILIO_ACCOUNT_SID',TWILIO_ACCOUNT_SID],
+        TWILIO_NOTIFICATION_SERVICE_SID=os.environ.get['TWILIO_NOTIFICATION_SERVICE_SID',TWILIO_NOTIFICATION_SERVICE_SID],
+        TWILIO_API_KEY=os.environ.get['TWILIO_API_KEY',TWILIO_API_KEY],
+        TWILIO_API_SECRET=bool(os.environ.get['TWILIO_API_SECRET',TWILIO_API_SECRET]),
+        TWILIO_CHAT_SERVICE_SID=os.environ.get['TWILIO_CHAT_SERVICE_SID',TWILIO_CHAT_SERVICE_SID],
+        TWILIO_SYNC_SERVICE_SID=os.environ.get['TWILIO_SYNC_SERVICE_SID',TWILIO_SYNC_SERVICE_SID],
+    )
 
 @app.route('/token', methods=['GET'])
 def randomToken():
@@ -106,9 +106,9 @@ def generateToken(identity):
     token.add_grant(video_grant)
 
 # Create an Chat grant and add to token
-if chat_service_sid:
-    chat_grant = ChatGrant(service_sid=chat_service_sid)
-    token.add_grant(chat_grant)
+    if chat_service_sid:
+        chat_grant = ChatGrant(service_sid=chat_service_sid)
+        token.add_grant(chat_grant)
     
     # Return token info as JSON
     return jsonify(identity=identity, token=token.to_jwt().decode('utf-8'))
