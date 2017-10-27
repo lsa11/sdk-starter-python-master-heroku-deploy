@@ -21,8 +21,8 @@ def snake_case_keys(somedict):
 
 app = Flask(__name__)
 fake = Factory.create()
-#dotenv_path = join(dirname(__file__), '.env')
-#load_dotenv(dotenv_path)
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
 TWILIO_ACCOUNT_SID = 'AC***'
 TWILIO_API_KEY = 'SK***'
